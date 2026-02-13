@@ -1,0 +1,5 @@
+replicaCount: 2
+
+image:
+  repository: jawaracode/iot-dummy
+  tag: latest
