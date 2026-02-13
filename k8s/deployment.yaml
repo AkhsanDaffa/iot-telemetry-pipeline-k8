@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-sensor-deployment
+  labels:
+    app: iot-sensor
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: iot-sensor
+  template:
+    metadata:
+      labels:
+        app: iot-sensor
+    spec:
+      containers:
+      - name: dummy-sensor
+        #image: akhsan/iot-dummy:v2
+        image: jawaracode/iot-dummy:latest
+        imagePullPolicy: Always
