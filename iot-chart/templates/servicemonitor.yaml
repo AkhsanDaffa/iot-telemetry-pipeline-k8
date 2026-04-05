@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-iot-monitor
+  labels:
+    app: iot-sensor
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: iot-sensor
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics

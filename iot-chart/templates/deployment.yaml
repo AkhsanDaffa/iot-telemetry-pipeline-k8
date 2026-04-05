@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iot-sensor-deployment
+  name: {{  .Release.Name  }}iot-sensor
   labels:
     app: iot-sensor
 spec:
@@ -13,9 +13,14 @@ spec:
     metadata:
       labels:
         app: iot-sensor
+        release: prometheus
     spec:
       containers:
       - name: dummy-sensor
         #image: akhsan/iot-dummy:v2
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: Always
+        imagePullPolicy: {{  .Values.image.pullPolicy  }}
+        ports:
+          - name: metrics
+            containerPort: 8080
+            protocol: TCP
