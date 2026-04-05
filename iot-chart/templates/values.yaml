@@ -1,0 +1,10 @@
+replicaCount: 2
+
+image:
+  repository: jawaracode/iot-dummy
+  tag: v4
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
