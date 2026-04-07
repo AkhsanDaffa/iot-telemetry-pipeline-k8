@@ -7,6 +7,7 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -14,17 +15,28 @@ import (
 )
 
 var (
-	tempGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "iot_temperature_current",
-		Help: "Current temperature reading from the IoT sensor",
-	})	
-	totalReadingsCounter = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "iot_temperature_total_readings",
-		Help: "Total number of temperature readings processed",
-	})
+	// Gunakan GaugeVec untuk mendukung multiple sensor_id
+	tempGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "iot_temperature_current",
+			Help: "Current temperature reading from the IoT sensor",
+		},
+		[]string{"sensor_id"},
+	)
+	
+	// Gunakan CounterVec agar kita tahu total pembacaan per masing-masing sensor
+	totalReadingsCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "iot_temperature_total_readings",
+			Help: "Total number of temperature readings processed",
+		},
+		[]string{"sensor_id"},
+	)
+	
+	// Error counter cukup global saja (menandakan gateway-nya yang gagal baca)
 	errorCounter = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: "iot_sensor_read_errors_total",
-		Help: "Total number of sensor read errors",
+		Help: "Total number of sensor read errors on the gateway",
 	})
 )
 
@@ -35,51 +47,64 @@ func init() {
 }
 
 type SensorData struct {
-	ID			string	`json:"sensor_id"`
-	Temp		float64 `json:"temperature"`
-	Timestamp 	string 	`json:"timestamp"`
+	ID        string  `json:"sensor_id"`
+	Temp      float64 `json:"temperature"`
+	Timestamp string  `json:"timestamp"`
 }
 
 func sensorLoop() {
+	// Ambil nama Pod
+	podName, err := os.Hostname()
+	if err != nil {
+		podName = "unknown-gateway"
+	}
+
+	fmt.Printf("Starting IoT Dummy Sensor Gateway on Pod: %s...\n", podName)
+
 	for {
+		// Simulasi error sesekali (5% kemungkinan gagal di tingkat Gateway)
 		if rand.Float32() < 0.05 {
 			errorCounter.Inc()
-			fmt.Println("Simulated sensor read error")
-			time.Sleep(1 * time.Second)
-			continue
+			fmt.Println("{\"error\": \"Simulated sensor read error on gateway timeout\"}")
+			time.Sleep(2 * time.Second)
+			continue // Lanjut ke putaran berikutnya
 		}
 
-			fmt.Println("Starting IoT Dummy Sensor...")
+		// 1 Pod mensimulasikan 5 sensor sekaligus
+		for i := 1; i <= 5; i++ {
+			// Bikin ID unik. Contoh: SENSOR-x8hlf-1
+			sensorID := fmt.Sprintf("SENSOR-%s-%d", podName, i)
 
-	for {
-		rawTemp := 20.0 + rand.Float64()*(35.0-20.0)
-		fixedTemp := math.Round(rawTemp*100) / 100
+			// Generate suhu & bulatkan 2 desimal
+			rawTemp := 20.0 + rand.Float64()*(35.0-20.0)
+			fixedTemp := math.Round(rawTemp*100) / 100
 
-		tempGauge.Set(fixedTemp)
-		totalReadingsCounter.Inc()
+			// Update Metrics
+			tempGauge.WithLabelValues(sensorID).Set(fixedTemp)
+			totalReadingsCounter.WithLabelValues(sensorID).Inc()
 
-		data := SensorData{
-				ID:			"SENSOR-001",
-				Temp:		fixedTemp,
-				Timestamp: 	time.Now().Format(time.RFC3339),
+			// Bungkus ke JSON struct
+			data := SensorData{
+				ID:        sensorID,
+				Temp:      fixedTemp,
+				Timestamp: time.Now().Format(time.RFC3339),
+			}
+
+			jsonData, _ := json.Marshal(data)
+			fmt.Println(string(jsonData))
 		}
 
-		jsonData, _ := json.Marshal(data)
-		fmt.Println(string(jsonData))
-
-		time.Sleep(1 * time.Second)
-	}
+		// Jeda sebelum gateway membaca data 5 sensor itu lagi
+		time.Sleep(2 * time.Second)
 	}
 }
 
 func main() {
-	fmt.Println("Starting IoT Dummy Sensor with Prometheus Metrics...")
-
 	go sensorLoop()
 
 	http.Handle("/metrics", promhttp.Handler())
 	fmt.Println("Serving metrics on port 8080...")
-	
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("Error starting HTTP server: %v", err)
 	}
