@@ -95,7 +95,7 @@ func sensorLoop() {
 		}
 
 		// Jeda sebelum gateway membaca data 5 sensor itu lagi
-		time.Sleep(2 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
 
