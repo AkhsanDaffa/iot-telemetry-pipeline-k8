@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: jawaracode/iot-dummy
-  tag: v6
+  tag: v7
   pullPolicy: Always
 
 service:
