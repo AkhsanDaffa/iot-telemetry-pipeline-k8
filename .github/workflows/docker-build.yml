@@ -41,11 +41,11 @@ jobs:
             iot-dummy:latest
       
       - name: Login ke Private Registry
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: docker login ${{ secrets.REGISTRY_LINK }} -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Tag & Push Docker Image ke Registry
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           IMAGE_PATH="registry.akhsanpasha.my.id/ujicoba/iot-dummy"
           TAG="${{ steps.vars.outputs.sha_short }}"
@@ -54,7 +54,7 @@ jobs:
           docker push $IMAGE_PATH:$TAG
       
       - name: Update Helm values.yaml & Push
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |              
           # Ubah tag di values.yaml
           sed -i "s/^  tag: .*/  tag: ${{ steps.vars.outputs.sha_short }}/g" iot-chart/values.yaml 

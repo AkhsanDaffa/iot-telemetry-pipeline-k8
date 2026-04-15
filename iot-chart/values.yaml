@@ -4,6 +4,8 @@ image:
   repository: registry.akhsanpasha.my.id/ujicoba/iot-dummy
   tag: 485114b
   pullPolicy: Always
+  imagePullSecrets:
+  - name: regcred
 
 service:
   type: ClusterIP
