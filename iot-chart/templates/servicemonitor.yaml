@@ -11,5 +11,5 @@ spec:
       app: iot-sensor
   endpoints:
   - port: metrics
-    interval: 5s
+    interval: 30s
     path: /metrics

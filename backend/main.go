@@ -64,7 +64,7 @@ func sensorLoop() {
 		podName = "unknown-gateway"
 	}
 
-	fmt.Printf("Starting Enterprise IoT Gateway on Pod: %s...\n", podName)
+	fmt.Printf(" Starting Enterprise IoT Gateway on Pod: %s...\n", podName)
 
 	for {
 		if rand.Float32() < 0.05 {
@@ -102,7 +102,7 @@ func sensorLoop() {
 			jsonData, _ := json.Marshal(data)
 			fmt.Println(string(jsonData))
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 }
 

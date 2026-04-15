@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: jawaracode/iot-dummy
-  tag: v7
+  repository: registry.akhsanpasha.my.id/ujicoba/iot-dummy
+  tag: latest
   pullPolicy: Always
 
 service:
