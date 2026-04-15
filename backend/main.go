@@ -64,13 +64,13 @@ func sensorLoop() {
 		podName = "unknown-gateway"
 	}
 
-	fmt.Printf(" Starting Enterprise IoT Gateway on Pod: %s...\n", podName)
+	fmt.Printf("Hal Starting Enterprise IoT Gateway on Pod: %s...\n", podName)
 
 	for {
 		if rand.Float32() < 0.05 {
 			errorCounter.Inc()
 			fmt.Println("{\"level\":\"error\", \"message\":\"Simulated gateway timeout fetching node data\"}")
-			time.Sleep(5 * time.Second)
+			time.Sleep(30 * time.Second)
 			continue
 		}
 
