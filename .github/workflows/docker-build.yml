@@ -26,7 +26,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
       
       - name: Build Docker Image (Local)
-        run: docker build -t iot-dummy:latest .
+        run: docker build -t iot-dummy:latest ./backend
       
       - name: Login ke Private Registry
         # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
