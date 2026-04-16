@@ -75,7 +75,7 @@ func sensorLoop() {
 		}
 
 		for i := 1; i <= 5; i++ {
-			sensorID := fmt.Sprintf("NODE-%s-%d", podName, i) // Ubah nama dari SENSOR ke NODE agar lebih industri
+			sensorID := fmt.Sprintf("Sensor-%d", i) // Ubah nama dari SENSOR ke NODE agar lebih industri
 
 			// Generate Data Kompleks
 			temp := math.Round((20.0+rand.Float64()*(35.0-20.0))*100) / 100
