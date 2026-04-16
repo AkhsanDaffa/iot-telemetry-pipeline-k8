@@ -10,3 +10,11 @@ image:
 service:
   type: ClusterIP
   port: 8080
+
+resources:
+  requests:
+    cpu: "10m"
+    memory: "10Mi"
+  limits:
+    cpu: "50m"
+    memory: "50Mi"
