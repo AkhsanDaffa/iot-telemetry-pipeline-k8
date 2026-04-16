@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
   "links": [],
   "panels": [
     {
@@ -32,25 +31,32 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#007bff",
                 "value": 0
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "#28a745",
+                "value": 23
+              },
+              {
+                "color": "#dc3545",
+                "value": 28
               }
             ]
-          }
+          },
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 9,
+        "h": 7,
+        "w": 4,
         "x": 0,
         "y": 0
       },
@@ -70,7 +76,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.3.3",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "datasource": {
@@ -78,7 +84,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "iot_temperature_current",
+          "expr": "iot_temperature_celsius{sensor_id=~\"$sensor\"}",
           "interval": "",
           "legendFormat": "{{pod}}",
           "range": true,
@@ -95,6 +101,214 @@
           }
         }
       ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "#ffa500",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 41
+              },
+              {
+                "color": "#0069d9",
+                "value": 61
+              }
+            ]
+          },
+          "unit": "humidity"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_humidity_percent{sensor_id=~\"$sensor\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Kelembaban Real-time",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": 0
+              },
+              {
+                "color": "dark-red",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "dark-green",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_battery_level_percent{sensor_id=~\"$sensor\"}",
+          "legendFormat": "{{pods}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Baterai Real-time",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": -30,
+          "min": -100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-red",
+                "value": 0
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": -80
+              },
+              {
+                "color": "semi-dark-green",
+                "value": -60
+              }
+            ]
+          },
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_signal_strength_dbm{sensor_id=~\"$sensor\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Sinyal WiFi Realtime",
       "type": "gauge"
     },
     {
@@ -125,12 +339,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 9,
+        "h": 3,
+        "w": 2,
+        "x": 16,
         "y": 0
       },
-      "id": 3,
+      "id": 7,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -148,26 +362,17 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.3",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "iot_temperature_total_readings",
-          "legendFormat": "{{pod}}",
+          "expr": "iot_total_readings{sensor_id=~\"$sensor\"}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total Pembacaan Sensor",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": ".*-(.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
+      "title": "Total Data ",
       "type": "stat"
     },
     {
@@ -232,10 +437,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 9,
+        "h": 7,
+        "w": 8,
         "x": 0,
-        "y": 8
+        "y": 7
       },
       "id": 2,
       "options": {
@@ -243,7 +448,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "hideZeros": false,
@@ -251,11 +456,11 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.3",
+      "pluginVersion": "12.4.3",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "iot_temperature_current",
+          "expr": "iot_temperature_celsius{sensor_id=~\"$sensor\"}",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -272,6 +477,288 @@
         }
       ],
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 7
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_battery_level_percent{sensor_id=~\"$sensor\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Grafik Battery (History)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_humidity_percent{sensor_id=~\"$sensor\"}",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Grafik Kelembaban (History)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 14
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "iot_signal_strength_dbm{sensor_id=~\"$sensor\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Grafik Sinyal WiFi (History)",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -279,7 +766,37 @@
   "schemaVersion": 42,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": [
+            "Sensor-1"
+          ],
+          "value": [
+            "Sensor-1"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(iot_temperature_celsius,sensor_id)",
+        "includeAll": true,
+        "label": "Pilih Ruangan/Sensor",
+        "multi": true,
+        "name": "sensor",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(iot_temperature_celsius,sensor_id)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-5m",
@@ -289,5 +806,6 @@
   "timezone": "browser",
   "title": "Sensor Dummy IoT",
   "uid": "adg6h2x",
-  "version": 2
+  "version": 1,
+  "weekStart": ""
 }
