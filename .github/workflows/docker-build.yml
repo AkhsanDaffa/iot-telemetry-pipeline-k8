@@ -67,7 +67,7 @@ jobs:
         #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |              
           # Ubah tag di values.yaml
-          sed -i "s/^  tag: .*/  tag: ${{ steps.vars.outputs.sha_short }}/g" iot-chart/values.yaml 
+          sed -i "s/^  tag: .*/  tag: \"${{ steps.vars.outputs.sha_short }}\"/g" iot-chart/values.yaml
           
           # Konfigurasi Git Bot
           git config --global user.name "github-actions[bot]"
