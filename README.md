@@ -1,78 +1,254 @@
 # 🚀 Edge IoT Telemetry Pipeline: From Legacy to Kubernetes
 
-![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
-![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&color=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
-![Raspberry Pi](https://img.shields.io/badge/-RaspberryPi-C51A4A?style=for-the-badge&logo=Raspberry-Pi)
-![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
+Production-like IoT telemetry pipeline running on Raspberry Pi (k3s), featuring real-time monitoring, autoscaling (HPA), and GitOps deployment with ArgoCD.
 
-## 📌 Project Overview
-This project demonstrates the migration of a dummy IoT sensor application from a legacy Docker Compose environment to a robust **Edge Kubernetes Cluster (K3s)** running on a Raspberry Pi. The primary goal is to establish a scalable, automated, and observable infrastructure suitable for Edge Computing scenarios.
+Designed to simulate real-world cloud-native and edge computing workloads.
 
-**Development Workflow:** Prototyped and tested on WSL (Windows Subsystem for Linux) before deploying to production Raspberry Pi K3s cluster.
+Tested with load simulation to validate:
+- 📈 Horizontal scaling behavior
+- 📊 Real-time observability (Prometheus + Grafana)
+- 🔄 Continuous deployment via GitOps
 
-## ✨ Key Achievements & Features
 
-* **Multi-Architecture CI/CD Pipeline:** Engineered a GitHub Actions workflow to automatically build and push Docker images supporting both `linux/amd64` and `linux/arm64` architectures, ensuring seamless deployment across different hardware environments.
-* **Infrastructure as Code (IaC) with Helm:** Transitioned from static YAML manifests to dynamic **Helm Charts**, enabling templated deployments, easy rollbacks, and scalable application management.
-* **Edge Computing Deployment:** Successfully deployed and stabilized the microservices architecture on a resource-constrained ARM64 device (Raspberry Pi) using K3s.
-* **Enterprise-Grade Observability:** Replaced basic monitoring with the `kube-prometheus-stack` (Prometheus Operator & Grafana) to achieve deep Kubernetes pods and cluster metrics monitoring, auto-discovery, and visual dashboards.
+## 🔥 Project Highlights
+
+- 🚀 Built full IoT pipeline on **edge device (Raspberry Pi)**
+- 📊 Implemented **real-time metrics monitoring (Prometheus + Grafana)**
+- ⚖️ Validated **Kubernetes HPA autoscaling under load**
+- 🔄 Applied **GitOps deployment using ArgoCD**
+- 🧪 Performed **load testing to simulate real traffic**
+
+## 📌 Overview
+
+This project simulates a real-world IoT telemetry pipeline, evolving from a simple script into a cloud-native, Kubernetes-based system with:
+
+- 📡 Simulated IoT sensors (temperature, humidity, battery, signal)
+- 📊 Observability stack (Prometheus + Grafana)
+- ⚖️ Autoscaling using Kubernetes HPA
+- 🔄 GitOps deployment with ArgoCD
+- 🧱 ARM-based edge infrastructure (Raspberry Pi 4B + k3s)
+
+## ⚡ Key Features
+
+### 🔧 IoT Telemetry Simulation
+- Multi-sensor data generation (5 nodes)
+- Realistic metrics (temperature, humidity, battery, RSSI)
+- Error simulation for reliability testing
+
+### 📊 Observability (Metrics Pipeline)
+- Metrics exposed via /metrics
+- Scraped by Prometheus
+- Visualized in Grafana
+
+### ⚖️ Autoscaling
+- Kubernetes Horizontal Pod Autoscaler (HPA)
+- CPU-based scaling under simulated load
+- Real-time validation using load generator
+
+### 🔄 GitOps Deployment
+- Continuous deployment using Argo CD
+- Declarative Helm-based configuration
+- Image updates via CI pipeline
+
+### 🧱 Edge Computing
+- Runs on Raspberry Pi 4B (ARM64)
+- Uses k3s (lightweight Kubernetes)
+- Optimized for low-resource environments
+
+## 🧠 Architecture
+
+```
+┌───────────────┐
+│ IoT Sensors   │ (Simulated in Go)
+└──────┬────────┘
+       │ /metrics
+       ▼
+┌───────────────┐
+│ Prometheus    │ ← ServiceMonitor
+└──────┬────────┘
+       ▼
+┌───────────────┐
+│ Grafana       │ (Dashboard)
+└──────┬────────┘
+       ▼
+┌───────────────┐
+│ Kubernetes    │ (HPA Scaling)
+└──────┬────────┘
+       ▼
+┌───────────────┐
+│ ArgoCD        │ (GitOps Sync)
+└───────────────┘
+```
+
+## ⚠️ Limitations
+
+- Uses CPU-based HPA (not custom metrics yet)
+- Simulated data (not real hardware sensors)
+- Single-node k3s cluster (not HA)
+
+## 🔮 Future Improvements
+
+- Use Prometheus Adapter for custom metrics (QPS-based scaling)
+- Integrate MQTT for real telemetry ingestion
+- Multi-node Kubernetes cluster
+
+## 🔄 CI/CD & Deployment Flow
+
+1. Push code to GitHub
+2. CI builds Docker image (multi-arch)
+3. Image pushed to private registry
+4. Manifest updated (Helm values)
+5. ArgoCD detects changes
+6. Deployment synced to k3s cluster
+7. Prometheus starts scraping metrics
+8. Grafana visualizes data
+9. HPA scales pods based on load
+
+## 📊 Observability & Autoscaling Validation
+
+### 🔍 1. Prometheus Target Discovery
+
+Prometheus successfully scrapes metrics from IoT service.
+
+![Prometheus Targets](assets/prometheus-targets.png)
+
+### 📈 2. Real-Time Metrics Query
+
+Example query: `iot_temperature_celsius`
+
+![Prometheus Graph](assets/prometheus-graph.png)
+
+### 📊 3. Grafana Dashboard
+
+Visualized metrics:
+- Temperature
+- Humidity
+- Battery
+- Signal strength
+
+![Grafana IoT Dashboard](assets/grafana-iot-dashboard.png)
+
+### ⚖️ 4. Autoscaling (HPA)
+
+Load testing performed using busybox:
+
+```bash
+kubectl run load-generator --rm -it \
+--image=busybox:1.28 \
+--restart=Never \
+-n iot-project \
+-- /bin/sh -c "while true; do wget -q -O - http://iot-service:8080/metrics > /dev/null; sleep 1; done"
+```
+
+Result:
+- CPU usage increased from ~10m → ~50m under sustained load
+- HPA scaled pods from 1 → 5 replicas automatically
+- Scaling triggered based on 50% CPU utilization threshold
+- No downtime observed during scaling events
+
+**Initial State (1 pod)**
+![HPA Initial](assets/hpa-initial.png)
+
+**Under Load (CPU ~50m)**
+![HPA Under Load](assets/hpa-under-load.png)
+
+**Peak (5 pods scaled)**
+![HPA Peak](assets/hpa-peak.png)
+
+### 🔄 5. GitOps Visibility (ArgoCD)
+
+| State | Screenshot |
+|-------|------------|
+| **Detected** | ![ArgoCD Detected](assets/argocd-initial.png) |
+| **Syncing** | ![ArgoCD Syncing](assets/argocd-syncing.png) |
+| **Healthy** | ![ArgoCD Synced](assets/argocd-synced.png) |
+
+## 💼 Why This Project Matters
+
+This project simulates real-world DevOps scenarios:
+
+- Handling telemetry data from distributed systems
+- Monitoring system health in real-time
+- Scaling workloads dynamically based on demand
+- Managing deployments using GitOps principles
+
+This reflects production patterns used in:
+- IoT platforms
+- Edge computing systems
+- Cloud-native microservices architectures
 
 ## 🛠️ Tech Stack
-* **Containerization:** Docker
-* **Orchestration:** K3s (Lightweight Kubernetes)
-* **Package Manager:** Helm v3
-* **CI/CD:** GitHub Actions
-* **Monitoring/Observability:** Prometheus, Grafana, Node Exporter, Kube-State-Metrics
-* **Hardware:** Raspberry Pi (ARM64)
+
+| Category | Technology |
+|----------|------------|
+| Language | Go |
+| Container | Docker (multi-arch) |
+| Orchestration | Kubernetes (k3s) |
+| Monitoring | Prometheus |
+| Visualization | Grafana |
+| GitOps | ArgoCD |
+| Infrastructure | Raspberry Pi 4B |
 
 ## 📂 Project Structure
+
 ```
-.
-├── backend/                    # Go IoT sensor application
-│   ├── main.go                 # Sensor logic - generates random temperature data
-│   ├── go.mod                  # Go module dependencies
-│   └── Dockerfile              # Multi-stage build for amd64 & arm64
-├── iot-chart/                  # Helm chart for Kubernetes deployment
-│   ├── Chart.yaml              # Chart metadata & version
-│   ├── values.yaml             # Default configuration values
+iot-telemetry/
+├── backend/                  # Go IoT sensor application
+│   ├── main.go               # Sensor logic
+│   ├── go.mod                # Go module dependencies
+│   └── Dockerfile            # Multi-stage build for amd64 & arm64
+├── iot-chart/                # Helm chart for Kubernetes deployment
+│   ├── Chart.yaml            # Chart metadata & version
+│   ├── values.yaml           # Default configuration values
+│   ├── dashboards/
+│   │   └── dashboard.json    # Grafana dashboard
 │   └── templates/
-│       └── deployment.yaml     # K8s deployment manifest
-├── k8s/                        # Raw Kubernetes manifests
-│   └── deployment.yaml         # Basic K8s deployment (legacy)
-├── .github/workflows/          # CI/CD automation
-│   └── docker-build.yml        # Multi-arch Docker image build & push
-└── assets/                     # Project documentation screenshots
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       ├── hpa.yaml
+│       ├── servicemonitor.yaml
+│       └── configmap-dashboard.yaml
+├── k8s/                      # Raw Kubernetes manifests (legacy)
+│   └── deployment.yaml
+├── .github/workflows/         # CI/CD automation
+│   └── docker-build.yml
+└── assets/                   # Project documentation screenshots
 ```
 
 ## 🎯 Skills Demonstrated
-| Category | Technologies |
-|----------|--------------|
-| **Languages** | Go, YAML |
-| **Containerization** | Docker, Docker Compose |
-| **Orchestration** | Kubernetes, K3s |
-| **CI/CD** | GitHub Actions |
-| **Monitoring** | Prometheus, Grafana |
-| **Tools** | Helm, kubectl |
 
-## 📸 Project Showcase
+### 🔧 DevOps & Cloud Native
+- Kubernetes deployment & autoscaling
+- Helm chart templating
+- GitOps workflow (ArgoCD)
 
-### 1. Multi-Arch CI/CD Pipeline (GitHub Actions)
-*Successfully building and pushing images for both AMD64 and ARM64 architectures.*
-![CI/CD Pipeline](assets/cicd-success.png)
+### 📊 Observability
+- Prometheus metrics design
+- Grafana dashboard creation
+- ServiceMonitor integration
 
-### 2. Kubernetes Pods Status & Workloads
-*All microservices and enterprise monitoring stacks are running smoothly inside the K3s cluster.*
-![K8s Pods Running](assets/k8s-pods-running.png)
+### ⚙️ Backend Engineering
+- Go-based telemetry service
+- Structured logging (JSON)
+- Metrics instrumentation
 
-### 3. IoT Sensor Data Generation
-*The deployed dummy sensor generating and transmitting real-time telemetry data.*
-![IoT Sensor Logs](assets/iot-sensor-logs.png)
+### 🧱 Infrastructure
+- Edge deployment (Raspberry Pi)
+- ARM64 containerization
+- Resource optimization
 
-### 4. Infrastructure Observability (Grafana)
-*Real-time cluster compute resources monitoring using the Kube-Prometheus-Stack.*
-![Grafana Dashboard](assets/grafana-dashboard.png)
+## 💡 Key Takeaways
 
----
-*Developed by Akhsan - Building scalable infrastructure for the future of IoT.*
+- Built end-to-end telemetry pipeline
+- Implemented real observability flow
+- Validated autoscaling behavior under load
+- Applied GitOps principles in production-like setup
+- Optimized for edge computing environment
+
+## 👤 Author
+
+**Akhsan Daffa Pasha**
+
+GitHub: https://github.com/AkhsanDaffa
+
+Focus: DevOps, Cloud Native, Edge Computing

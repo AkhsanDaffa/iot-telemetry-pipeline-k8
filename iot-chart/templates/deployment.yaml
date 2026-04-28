@@ -3,27 +3,72 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-iot-sensor
   labels:
-    app: iot-sensor
+    app.kubernetes.io/name: iot-sensor
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
   selector:
     matchLabels:
-      app: iot-sensor
+      app.kubernetes.io/name: iot-sensor
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
   template:
     metadata:
       labels:
-        app: iot-sensor
-        release: monitoring
+        app.kubernetes.io/name: iot-sensor
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
+      {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets:
-        - name: regcred
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
       containers:
-        - name: dummy-sensor
+        - name: iot-sensor
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
           ports:
             - name: metrics
               containerPort: 8080
-              protocol: TCP
+
+          # 🔥 ENV CONFIG
+          env:
+            - name: SENSOR_INTERVAL
+              value: "{{ .Values.env.SENSOR_INTERVAL }}"
+            - name: SENSOR_COUNT
+              value: "{{ .Values.env.SENSOR_COUNT }}"
+            - name: ERROR_RATE
+              value: "{{ .Values.env.ERROR_RATE }}"
+
+          # 🔥 HEALTH CHECK
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: 8080
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: 8080
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+
+          # 🔥 GRACEFUL SHUTDOWN
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]

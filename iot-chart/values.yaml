@@ -5,7 +5,7 @@ image:
   tag: "22e5fc1"
   pullPolicy: Always
   imagePullSecrets:
-  - name: regcred
+    - name: regcred
 
 service:
   type: ClusterIP
@@ -13,8 +13,37 @@ service:
 
 resources:
   requests:
-    cpu: "10m"
-    memory: "10Mi"
-  limits:
     cpu: "50m"
-    memory: "50Mi"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "128Mi"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+env:
+  SENSOR_INTERVAL: "30"
+  SENSOR_COUNT: "5"
+  ERROR_RATE: "0.05"
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+metrics:
+  enabled: true
+  path: /metrics
+  port: 8080
+
+dashboard:
+  enabled: true

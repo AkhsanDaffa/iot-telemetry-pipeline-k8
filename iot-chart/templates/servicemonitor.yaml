@@ -3,13 +3,14 @@ kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}-iot-monitor
   labels:
-    app: iot-sensor
     release: monitoring
 spec:
   selector:
     matchLabels:
-      app: iot-sensor
+      app.kubernetes.io/name: iot-sensor
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
   endpoints:
-  - port: metrics
-    interval: 30s
-    path: /metrics
+    - port: metrics
+      path: /metrics
+      interval: 15s
