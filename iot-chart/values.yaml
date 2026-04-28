@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: registry.akhsanpasha.my.id/ujicoba/iot-dummy
-  tag: "22e5fc1"
+  tag: "e617603"
   pullPolicy: Always
   imagePullSecrets:
     - name: regcred
